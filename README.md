@@ -102,23 +102,39 @@ Copy the Skill into your global Codex skills directory:
 ```bash
 mkdir -p ~/.codex/skills/c2c-control-room
 cp skill/SKILL.md ~/.codex/skills/c2c-control-room/SKILL.md
+```
 
-Start a new Codex conversation after installation so the Skill catalog is
-refreshed.
-Usage
+Start a new Codex conversation after installation so the Skill catalog is refreshed.
+
+## Usage
+
 Explicitly invoke the Skill:
+
+```text
 $c2c-control-room
+```
 
 or ask for Control Room behavior naturally.
+
 Examples:
+
+```text
 Use Control Room for this task.
+```
 
 This selects Controlled mode by default.
+
 For unattended execution:
+
+```text
 Use c2c-control-room in unattended mode and complete the approved sprint.
+```
 
 Ordinary codex-with-chatgpt tasks should not activate Control Room.
-Workflow
+
+## Workflow
+
+```text
 User
   ↓
 c2c-control-room
@@ -128,8 +144,10 @@ codex-with-chatgpt
   │   authoritative C2C mechanics
   ↓
 C2C protocol / connector / MCP / session / HANDOFF
+```
 
-Design principles
+## Design principles
+
 - Policy above infrastructure.
 - No duplicated C2C state machine.
 - No second session or checkpoint system.
@@ -139,8 +157,11 @@ Design principles
 - Codex owns implementation HOW inside the approved boundary.
 - Agent-to-agent communication can stay concise and machine-oriented.
 - Human-facing progress uses the user's language.
-Validation
+
+## Validation
+
 The initial workflow was smoke-tested against a real C2C-enabled workspace for:
+
 - explicit Skill discovery;
 - Controlled mode;
 - independent C2C review;
@@ -150,9 +171,13 @@ The initial workflow was smoke-tested against a real C2C-enabled workspace for:
 - stopping after the approved unattended sprint;
 - scope containment;
 - ordinary codex-with-chatgpt usage not triggering Control Room.
-Status
+
+## Status
+
 Early release.
 The Skill intentionally remains small so changes in upstream C2C behavior can
 be inherited rather than duplicated.
-License
+
+## License
+
 MIT
