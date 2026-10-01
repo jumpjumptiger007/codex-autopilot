@@ -1,14 +1,14 @@
 ---
-name: c2c-control-room
+name: codex-control-room
 description: >
-  Optional workflow policy on top of codex-with-chatgpt for explicitly
-  requested Control Room workflows. User-facing modes are Copilot (default,
-  controlled behavior) and Autopilot (explicit opt-in, unattended behavior).
-  Do not use for ordinary codex-with-chatgpt tasks or when the user chooses
-  to relay/control the C2C workflow manually.
+  Codex Control Room workflow policy on top of codex-with-chatgpt.
+  User-facing modes are Copilot (default, human-guided Gate execution) and
+  Autopilot (explicit opt-in, autonomous multi-Gate execution within an
+  approved scope). Do not use for ordinary codex-with-chatgpt tasks or when
+  the user chooses to relay/control the C2C workflow manually.
 ---
 
-# C2C Control Room
+# Codex Control Room
 
 This skill adds workflow policy above `codex-with-chatgpt`.
 
