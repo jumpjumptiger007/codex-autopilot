@@ -2,7 +2,8 @@
 name: c2c-control-room
 description: >
   Optional workflow policy on top of codex-with-chatgpt for explicitly
-  requested Control Room, controlled C2C, or unattended C2C workflows.
+  requested Control Room workflows. User-facing modes are Copilot (default,
+  controlled behavior) and Autopilot (explicit opt-in, unattended behavior).
   Do not use for ordinary codex-with-chatgpt tasks or when the user chooses
   to relay/control the C2C workflow manually.
 ---
@@ -27,14 +28,26 @@ If the user explicitly says they will manually relay, mediate, or control the
 C2C exchange, do not activate Control Room unless they explicitly request it
 again.
 
-Modes:
+User-facing modes:
 
-- `controlled` — default whenever Control Room is requested.
-- `unattended` — only after explicit authorization for unattended,
-  autonomous, or fully automatic C2C execution.
+- `Copilot` — default whenever Control Room is requested. This maps to the
+  existing `controlled` behavior.
+- `Autopilot` — only after explicit authorization for Autopilot,
+  unattended, autonomous, or fully automatic C2C execution. This maps to the
+  existing `unattended` behavior.
 
-Never infer unattended mode merely from words such as "automatic", "fix it",
-or "continue".
+The legacy names `controlled` and `unattended` remain valid aliases.
+
+If the user does not specify a mode, select Copilot without asking a mode
+question.
+
+Never infer Autopilot merely from words such as "automatic", "fix it", or
+"continue".
+
+Codex Desktop Goal mode is independent from the Control Room mode. Goal mode
+does not imply Autopilot. If Autopilot was not explicitly authorized, remain
+in Copilot even when Codex is running in Goal mode. Goal mode may be used
+alongside Autopilot for long-running execution.
 
 ## Initiation and readiness
 
@@ -46,8 +59,8 @@ readiness check:
 
 1. Use the authoritative `codex-with-chatgpt` workflow to verify C2C readiness,
    connector availability, conversation state, and MCP review access.
-2. Prepare the requested Control Room mode, including `unattended` only when
-   the user has explicitly authorized unattended execution.
+2. Prepare the requested Control Room mode, including Autopilot /
+   `unattended` only when the user has explicitly authorized it.
 3. Treat any already-open ChatGPT Project or browser pane supplied by the user
    as a navigation hint, not as proof that C2C is ready.
 4. Do not begin project implementation, modify project files, invent a goal, or
@@ -113,9 +126,9 @@ Do not split coherent work merely to create more Gates.
 Do not create a second task ID system, iteration counter, checkpoint, session,
 state machine, or HANDOFF format.
 
-## Controlled mode
+## Copilot mode
 
-Controlled mode is the default.
+Copilot is the default and uses the existing controlled behavior.
 
 For the current Gate:
 
@@ -131,9 +144,10 @@ When the current Gate reaches DONE, stop before beginning a new Gate.
 
 Report the result, current project status, and proposed next Gate to the user.
 
-## Unattended mode
+## Autopilot mode
 
-Enter unattended mode only after explicit user authorization.
+Enter Autopilot only after explicit user authorization. Autopilot uses the
+existing unattended behavior.
 
 Before implementation, establish an approved sprint envelope from the user's
 request and available project context:
@@ -155,7 +169,7 @@ repairs.
 Do not invent features, architecture changes, cleanup projects, or other work
 merely to continue execution.
 
-Stop unattended execution when:
+Stop Autopilot execution when:
 
 - the approved sprint success criteria are satisfied;
 - a material decision outside the approved envelope is required;
