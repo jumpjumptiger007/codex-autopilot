@@ -15,26 +15,24 @@ A lightweight **Copilot / Autopilot workflow layer** for
 ### Copilot
 
 ```text
-$c2c-control-room
+$codex-control-room
 
 Implement the approved task.
 ```
 
-Copilot is the default.
-
-Control Room may plan, execute, review, and repair the current Gate through the
-normal C2C workflow. When that Gate is complete, it stops before starting
-another one.
+Copilot is the default. Control Room may plan, execute, review, and repair the
+current Gate through the normal C2C workflow. When that Gate is complete, it
+stops before starting another one.
 
 ### Autopilot
 
 ```text
-$c2c-control-room autopilot
+$codex-control-room autopilot
 
 Complete the approved sprint.
 ```
 
-Autopilot may automatically continue from one completed Gate to the next inside
+Autopilot may continue automatically from one completed Gate to the next inside
 the approved sprint scope.
 
 It still stops when human input is genuinely required, including:
@@ -48,19 +46,50 @@ It still stops when human input is genuinely required, including:
 
 `unattended` remains supported as an alias for `autopilot`.
 
+## Recommended Autopilot launch
+
+For a long or important autonomous run, use a two-step launch.
+
+**Step 1 — Initialize Control Room**
+
+```text
+$codex-control-room autopilot
+
+Initialize Control Room in Autopilot mode only.
+
+Verify C2C readiness, connector availability, conversation state, and MCP review access.
+
+Do not begin implementation, modify project files, invent a goal, or perform unrelated cleanup.
+
+Prepare Control Room for autonomous multi-Gate execution within the goal and scope I will provide next.
+
+Stop after readiness is established and reply exactly:
+
+Control Room Ready
+```
+
+**Step 2 — Send the actual goal**
+
+After `Control Room Ready`, send the actual goal, scope, constraints, and
+success criteria.
+
+The two-step launch is optional. For long autonomous work, Codex Desktop
+**Goal mode + Control Room Autopilot** is a useful combination.
+
+Goal mode and Autopilot are complementary but independent:
+
+- **Goal mode** keeps Codex working toward a target.
+- **Autopilot** allows Control Room to continue across completed Gates.
+
+Goal mode does not automatically enable Autopilot.
+
 ## What Control Room adds
 
-`codex-with-chatgpt` already owns the C2C infrastructure:
+`codex-with-chatgpt` already owns C2C communication, MCP review, TASK_ID /
+iterations, checkpoints, HANDOFF, connector behavior, and conversation
+management.
 
-- ChatGPT ↔ Codex communication;
-- MCP workspace review;
-- TASK_ID and iterations;
-- checkpoints and HANDOFF;
-- connector and conversation management.
-
-Codex Control Room does not replace those systems.
-
-It adds only workflow policy:
+Codex Control Room adds workflow policy only:
 
 - clear ChatGPT / Codex responsibility boundaries;
 - bounded, reviewable Gates;
@@ -71,46 +100,6 @@ It adds only workflow policy:
 If Control Room and `codex-with-chatgpt` conflict on operational behavior,
 upstream C2C is authoritative.
 
-## Optional two-step launch
-
-For a long or important Autopilot run, you can initialize Control Room before
-sending the actual implementation goal:
-
-```text
-$c2c-control-room autopilot
-
-Initialize Control Room only.
-Verify C2C readiness and stop after initialization.
-```
-
-After:
-
-```text
-Control Room Ready
-```
-
-send the actual goal, scope, constraints, and success criteria.
-
-This two-step launch is optional.
-
-## Codex Goal mode
-
-Codex Desktop **Goal mode** and Control Room **Autopilot** are complementary
-but independent.
-
-- **Goal mode** keeps Codex working toward a target.
-- **Autopilot** allows Control Room to continue across completed Gates.
-
-Goal mode does not automatically enable Autopilot.
-
-For long autonomous work, a useful combination is:
-
-```text
-Codex Goal mode
-+
-$c2c-control-room autopilot
-```
-
 ## Install
 
 `codex-with-chatgpt` must already be installed and configured.
@@ -118,8 +107,8 @@ $c2c-control-room autopilot
 Copy the Skill into your Codex skills directory:
 
 ```bash
-mkdir -p ~/.codex/skills/c2c-control-room
-cp skill/SKILL.md ~/.codex/skills/c2c-control-room/SKILL.md
+mkdir -p ~/.codex/skills/codex-control-room
+cp skill/SKILL.md ~/.codex/skills/codex-control-room/SKILL.md
 ```
 
 Start a new Codex conversation so the Skill catalog refreshes.
