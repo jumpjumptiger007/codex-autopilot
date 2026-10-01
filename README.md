@@ -29,14 +29,24 @@ It adds only a small workflow-policy layer for users who want:
 - smaller, reviewable implementation Gates;
 - explicit scope control;
 - a compact human-readable progress view;
-- controlled execution by default;
-- explicitly authorized unattended multi-Gate sprints.
+- Copilot execution by default;
+- explicitly authorized Autopilot multi-Gate sprints.
 
 ## Modes
 
-### Controlled
+Control Room has two user-facing modes:
 
-Controlled mode is the default when Control Room is explicitly requested.
+- **Copilot** — the default. This is the existing `controlled` behavior.
+- **Autopilot** — explicit opt-in. This is the existing `unattended` behavior.
+
+The legacy names `controlled` and `unattended` remain valid aliases.
+
+If no mode is specified, Control Room does **not** ask which mode to use. It
+starts in Copilot mode.
+
+### Copilot
+
+Copilot is the default whenever Control Room is explicitly requested.
 
 ChatGPT investigates, plans and reviews. Codex executes the current bounded
 Gate.
@@ -47,9 +57,9 @@ iterations.
 When the Gate reaches `DONE`, execution stops and returns control to the user
 before another Gate begins.
 
-### Unattended
+### Autopilot
 
-Unattended mode must be explicitly requested.
+Autopilot must be explicitly requested.
 
 Within a pre-approved sprint scope, Control Room may automatically continue
 from one completed Gate to the next.
@@ -116,19 +126,74 @@ $c2c-control-room
 
 or ask for Control Room behavior naturally.
 
-Examples:
+### Copilot — default
+
+```text
+$c2c-control-room
+
+Implement the approved task.
+```
+
+or:
 
 ```text
 Use Control Room for this task.
 ```
 
-This selects Controlled mode by default.
+No mode argument means **Copilot**. Control Room completes the current bounded
+Gate, then stops and returns control to the user.
 
-For unattended execution:
+### Autopilot — explicit opt-in
 
 ```text
-Use c2c-control-room in unattended mode and complete the approved sprint.
+$c2c-control-room autopilot
+
+Complete the approved sprint.
 ```
+
+Equivalent wording such as `unattended` remains supported.
+
+Autopilot authorizes Control Room to continue automatically from one completed
+Gate to the next inside the approved sprint envelope. It still stops for
+material decisions, scope expansion, destructive actions, human-only
+authentication, upstream iteration limits, or genuine external blockers.
+
+### Optional two-step initialization
+
+For a long or high-value run, Control Room can be initialized before the
+implementation goal is sent:
+
+```text
+$c2c-control-room autopilot
+
+Initialize Control Room only. Verify C2C readiness and stop after initialization.
+```
+
+After:
+
+```text
+Control Room Ready
+```
+
+send the actual goal, scope and success criteria.
+
+This two-step launch is optional. It is a readiness workflow, not a requirement
+of the Skill.
+
+### Relationship to Codex Goal mode
+
+Codex Desktop Goal mode and Control Room Autopilot are complementary but
+independent:
+
+- **Goal mode** controls Codex's persistence toward a target.
+- **Autopilot** authorizes Control Room to continue across completed Gates.
+
+Goal mode does **not** imply Autopilot. If Autopilot was not explicitly
+authorized, Control Room remains in Copilot mode even when Codex is running in
+Goal mode.
+
+For a long fully autonomous sprint, a useful combination is Codex Goal mode
+plus `$c2c-control-room autopilot`.
 
 Ordinary codex-with-chatgpt tasks should not activate Control Room.
 
@@ -163,12 +228,12 @@ C2C protocol / connector / MCP / session / HANDOFF
 The initial workflow was smoke-tested against a real C2C-enabled workspace for:
 
 - explicit Skill discovery;
-- Controlled mode;
+- Copilot mode (controlled behavior);
 - independent C2C review;
-- stopping after a Controlled Gate;
-- explicit Unattended mode;
+- stopping after a Copilot Gate;
+- explicit Autopilot mode (unattended behavior);
 - automatic Gate-to-Gate continuation;
-- stopping after the approved unattended sprint;
+- stopping after the approved Autopilot sprint;
 - scope containment;
 - ordinary codex-with-chatgpt usage not triggering Control Room.
 
