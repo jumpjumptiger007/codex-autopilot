@@ -36,6 +36,36 @@ Modes:
 Never infer unattended mode merely from words such as "automatic", "fix it",
 or "continue".
 
+## Initiation and readiness
+
+Control Room may be initialized before the actual implementation goal is
+provided.
+
+When the user requests Control Room initiation, preparation, arming, or a
+readiness check:
+
+1. Use the authoritative `codex-with-chatgpt` workflow to verify C2C readiness,
+   connector availability, conversation state, and MCP review access.
+2. Prepare the requested Control Room mode, including `unattended` only when
+   the user has explicitly authorized unattended execution.
+3. Treat any already-open ChatGPT Project or browser pane supplied by the user
+   as a navigation hint, not as proof that C2C is ready.
+4. Do not begin project implementation, modify project files, invent a goal, or
+   perform unrelated cleanup during initiation.
+5. Stop after readiness has been established and wait for the user's actual
+   goal.
+6. When the user requests the standard readiness acknowledgement, reply
+   exactly:
+
+   `Control Room Ready`
+
+If readiness cannot be established, do not claim success. Use normal upstream
+setup or repair behavior when permitted, and surface a blocker only when
+`codex-with-chatgpt` genuinely requires human action.
+
+All connector, browser, repair, conversation-management, MCP, and protocol
+mechanics remain owned by `codex-with-chatgpt`.
+
 ## Responsibility boundary
 
 ChatGPT owns the high-level WHAT and WHY:
