@@ -1,9 +1,9 @@
-# C2C Autopilot
+# Codex Autopilot
 
-An explicit multi-task sprint orchestrator on top of
-[`codex-with-chatgpt`](https://github.com/XiaoDuoYa/codex-with-chatgpt).
+Codex Autopilot is a thin autonomous multi-Gate sprint orchestration layer
+built on top of [`codex-with-chatgpt`](https://github.com/XiaoDuoYa/codex-with-chatgpt).
 
-> C2C = inner task loop. C2C Autopilot = outer sprint loop.
+> C2C = inner bounded-task loop. Codex Autopilot = outer autonomous sprint loop.
 
 ## Normal C2C
 
@@ -20,7 +20,7 @@ workflow.
 ## Multi-Gate autonomous sprint
 
 ```text
-$codex-c2c-autopilot autopilot
+$codex-autopilot autopilot
 
 Complete this sprint: <goal, scope, constraints, and success criteria>
 ```
@@ -37,9 +37,9 @@ required.
 You can initialize Autopilot before sharing the sprint goal:
 
 ```text
-$codex-c2c-autopilot autopilot
+$codex-autopilot autopilot
 
-Initialize C2C Autopilot only.
+Initialize Codex Autopilot only.
 
 Use the authoritative codex-with-chatgpt workflow to establish readiness.
 
@@ -47,7 +47,7 @@ Do not begin implementation, modify project files, or invent a goal.
 
 Stop when the upstream C2C workflow is ready and reply exactly:
 
-C2C Autopilot Ready
+Codex Autopilot Ready
 ```
 
 Then send the sprint goal, scope, constraints, and success criteria in your
@@ -59,8 +59,8 @@ Install [`codex-with-chatgpt`](https://github.com/XiaoDuoYa/codex-with-chatgpt)
 first, then copy the Skill into your Codex skills directory:
 
 ```bash
-mkdir -p ~/.codex/skills/codex-c2c-autopilot
-cp skill/SKILL.md ~/.codex/skills/codex-c2c-autopilot/SKILL.md
+mkdir -p ~/.codex/skills/codex-autopilot
+cp skill/SKILL.md ~/.codex/skills/codex-autopilot/SKILL.md
 ```
 
 Start a new Codex conversation to refresh Skill discovery. Follow the upstream

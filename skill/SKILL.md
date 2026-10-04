@@ -1,5 +1,5 @@
 ---
-name: codex-c2c-autopilot
+name: codex-autopilot
 description: >
   Explicitly requested autonomous execution of a multi-Gate sprint, with each
   Gate handled as one complete codex-with-chatgpt task. Do not activate for
@@ -7,7 +7,7 @@ description: >
   finish, automate, or from Goal mode.
 ---
 
-# C2C Autopilot
+# Codex Autopilot
 
 This Skill coordinates an approved sprint across ordinary
 [`codex-with-chatgpt`](https://github.com/XiaoDuoYa/codex-with-chatgpt) tasks.
@@ -19,8 +19,8 @@ recovery, and protocol. Its current instructions are authoritative.
 Activate only when the user explicitly requests Autopilot for autonomous,
 multi-Gate execution, for example:
 
-- `$codex-c2c-autopilot autopilot`
-- “Run this sprint autonomously with C2C Autopilot.”
+- `$codex-autopilot autopilot`
+- “Run this sprint autonomously with Codex Autopilot.”
 
 Do not infer that authorization from “continue,” “finish this,” “do it,”
 “automatic,” Goal mode, or task size. For one bounded task, use
@@ -34,7 +34,7 @@ whatever readiness it requires. Do not modify project files, invent a goal,
 or begin implementation. Stop once C2C is ready. If the user requested the
 standard acknowledgement, reply exactly:
 
-`C2C Autopilot Ready`
+`Codex Autopilot Ready`
 
 The user provides the sprint goal and its scope, constraints, and success
 criteria in the next message. Surface any human action required by C2C.
