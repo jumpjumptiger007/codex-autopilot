@@ -1,248 +1,85 @@
 ---
-name: codex-control-room
+name: codex-c2c-autopilot
 description: >
-  Codex Control Room workflow policy on top of codex-with-chatgpt.
-  User-facing modes are Copilot (default, human-guided Gate execution) and
-  Autopilot (explicit opt-in, autonomous multi-Gate execution within an
-  approved scope). Do not use for ordinary codex-with-chatgpt tasks or when
-  the user chooses to relay/control the C2C workflow manually.
+  Explicitly requested autonomous execution of a multi-Gate sprint, with each
+  Gate handled as one complete codex-with-chatgpt task. Do not activate for
+  ordinary bounded tasks or infer authorization from requests to continue,
+  finish, automate, or from Goal mode.
 ---
 
-# Codex Control Room
+# C2C Autopilot
 
-This skill adds workflow policy above `codex-with-chatgpt`.
+This Skill coordinates an approved sprint across ordinary
+[`codex-with-chatgpt`](https://github.com/XiaoDuoYa/codex-with-chatgpt) tasks.
+It does not replace that Skill. C2C owns its setup, task workflow, review,
+recovery, and protocol. Its current instructions are authoritative.
 
-It does not replace or fork C2C.
+## Activation
 
-Use the installed `codex-with-chatgpt` skill for all C2C mechanics.
-Its current instructions and protocol are authoritative whenever the two
-skills overlap.
+Activate only when the user explicitly requests Autopilot for autonomous,
+multi-Gate execution, for example:
 
-## Activation and modes
+- `$codex-c2c-autopilot autopilot`
+- “Run this sprint autonomously with C2C Autopilot.”
 
-Activate only when the user explicitly requests Control Room behavior.
+Do not infer that authorization from “continue,” “finish this,” “do it,”
+“automatic,” Goal mode, or task size. For one bounded task, use
+`codex-with-chatgpt` directly.
 
-Do not activate for ordinary `codex-with-chatgpt` usage.
+## Initialization
 
-If the user explicitly says they will manually relay, mediate, or control the
-C2C exchange, do not activate Control Room unless they explicitly request it
-again.
+The user may initialize Autopilot before giving the sprint goal. In that case,
+follow the current `codex-with-chatgpt` readiness workflow and let it establish
+whatever readiness it requires. Do not modify project files, invent a goal,
+or begin implementation. Stop once C2C is ready. If the user requested the
+standard acknowledgement, reply exactly:
 
-User-facing modes:
+`C2C Autopilot Ready`
 
-- `Copilot` — default whenever Control Room is requested. This maps to the
-  existing `controlled` behavior.
-- `Autopilot` — only after explicit authorization for Autopilot,
-  unattended, autonomous, or fully automatic C2C execution. This maps to the
-  existing `unattended` behavior.
+The user provides the sprint goal and its scope, constraints, and success
+criteria in the next message. Surface any human action required by C2C.
 
-The legacy names `controlled` and `unattended` remain valid aliases.
+## Sprint loop
 
-If the user does not specify a mode, select Copilot without asking a mode
-question.
+Treat the user's explicit Autopilot request and sufficiently specified goal as
+the sprint authorization. Establish a concise envelope from available context:
+goal, in-scope work, exclusions, constraints, and success criteria. Do not
+invent requirements or ask for information already available. If the goal is
+clear enough, proceed.
 
-Never infer Autopilot merely from words such as "automatic", "fix it", or
-"continue".
+Choose meaningful, bounded, independently reviewable Gates within that
+envelope. Refine the remaining Gates as repository facts emerge, but do not
+expand scope or create work merely to continue. The invariant is:
 
-Codex Desktop Goal mode is independent from the Control Room mode. Goal mode
-does not imply Autopilot. If Autopilot was not explicitly authorized, remain
-in Copilot even when Codex is running in Goal mode. Goal mode may be used
-alongside Autopilot for long-running execution.
+**One Gate is exactly one complete upstream C2C task.**
 
-## Initiation and readiness
+Run each Gate through the normal `codex-with-chatgpt` workflow. Let that Skill
+handle its own iterations and review. Do not start the next Gate until the
+current upstream task reaches `DONE`; then check the sprint criteria and
+either finish, stop for a material decision, or start a fresh C2C task for the
+next in-scope Gate. A `PLAN` within a Gate remains part of that same upstream
+task.
 
-Control Room may be initialized before the actual implementation goal is
-provided.
+Do not create another protocol, task identifier, iteration counter,
+checkpoint, session, or recovery mechanism. The Gate is only an orchestration
+unit above C2C.
 
-When the user requests Control Room initiation, preparation, arming, or a
-readiness check:
+## Responsibility and stopping
 
-1. Use the authoritative `codex-with-chatgpt` workflow to verify C2C readiness,
-   connector availability, conversation state, and MCP review access.
-2. Prepare the requested Control Room mode, including Autopilot /
-   `unattended` only when the user has explicitly authorized it.
-3. Treat any already-open ChatGPT Project or browser pane supplied by the user
-   as a navigation hint, not as proof that C2C is ready.
-4. Do not begin project implementation, modify project files, invent a goal, or
-   perform unrelated cleanup during initiation.
-5. Stop after readiness has been established and wait for the user's actual
-   goal.
-6. When the user requests the standard readiness acknowledgement, reply
-   exactly:
+`codex-with-chatgpt` owns planning and review for each task, execution
+mechanics, setup, browser and connector behavior, conversation management,
+protocol, and recovery. Codex performs repository work and local validation
+under the approved scope. This Skill owns only the sprint envelope, Gate
+selection, continuation between completed tasks, overall completion, and
+scope enforcement.
 
-   `Control Room Ready`
+Continue through ordinary engineering failures and scope-local repairs using
+the upstream workflow. Stop and return control when the sprint criteria are
+met, or when progress requires a material decision, scope expansion,
+destructive or irreversible action, security/privacy judgment, human-only
+action, or external dependency. Also stop when upstream C2C reaches its own
+limit or reports a genuine blocker; never bypass or extend its limits.
 
-If readiness cannot be established, do not claim success. Use normal upstream
-setup or repair behavior when permitted, and surface a blocker only when
-`codex-with-chatgpt` genuinely requires human action.
-
-All connector, browser, repair, conversation-management, MCP, and protocol
-mechanics remain owned by `codex-with-chatgpt`.
-
-## Responsibility boundary
-
-ChatGPT owns the high-level WHAT and WHY:
-
-- investigation and external research when needed;
-- product and architecture reasoning;
-- alternatives and material tradeoffs;
-- scope and acceptance criteria;
-- decomposition into bounded work;
-- independent review.
-
-Codex owns implementation HOW inside the approved boundary:
-
-- repository inspection needed for implementation;
-- editing and shell commands;
-- local code organization;
-- tests and validation;
-- ordinary debugging;
-- lint/type/build fixes;
-- small implementation-local refactors.
-
-Codex must not become the primary product architect.
-
-ChatGPT should not micro-manage Codex's individual tool calls.
-
-Return to the user for a new material decision involving product behavior,
-architecture/public contracts, data-model direction, meaningful dependency
-tradeoffs, security/privacy policy, scope expansion, or destructive /
-irreversible actions.
-
-## Gates
-
-A Gate is only a human-facing name for one bounded, independently reviewable
-unit of work. It is not a C2C protocol state.
-
-Prefer one bounded Gate per C2C task.
-
-A Gate may require multiple upstream PLAN/review iterations.
-
-If the user's request is too broad for one reviewable Gate, have ChatGPT first
-reduce it to the next meaningful bounded Gate before implementation.
-
-Do not split coherent work merely to create more Gates.
-
-Do not create a second task ID system, iteration counter, checkpoint, session,
-state machine, or HANDOFF format.
-
-## Copilot mode
-
-Copilot is the default and uses the existing controlled behavior.
-
-For the current Gate:
-
-1. Use ChatGPT as the investigation/planning layer.
-2. Resolve or surface material design decisions before implementation.
-3. Execute the bounded work through the normal `codex-with-chatgpt` workflow.
-4. Let Codex handle ordinary implementation failures locally.
-5. Use the normal upstream independent-review loop after meaningful execution.
-6. Continue scope-local PLAN / execution / review repairs until the Gate is
-   DONE or genuinely BLOCKED.
-
-When the current Gate reaches DONE, stop before beginning a new Gate.
-
-Report the result, current project status, and proposed next Gate to the user.
-
-## Autopilot mode
-
-Enter Autopilot only after explicit user authorization. Autopilot uses the
-existing unattended behavior.
-
-Before implementation, establish an approved sprint envelope from the user's
-request and available project context:
-
-- overall goal;
-- in-scope work;
-- known exclusions;
-- success criteria;
-- established constraints.
-
-ChatGPT may decompose that envelope into bounded Gates.
-
-Within the approved envelope, complete Gates through the normal upstream C2C
-workflow and continue automatically after a Gate reaches DONE.
-
-Do not wake the user for ordinary engineering failures or scope-local review
-repairs.
-
-Do not invent features, architecture changes, cleanup projects, or other work
-merely to continue execution.
-
-Stop Autopilot execution when:
-
-- the approved sprint success criteria are satisfied;
-- a material decision outside the approved envelope is required;
-- scope expansion is required;
-- a destructive or irreversible action requires approval;
-- C2C requires human login, consent, CAPTCHA, 2FA, credentials, or permission;
-- upstream reaches its iteration limit;
-- a genuine external or human-only blocker prevents progress.
-
-Do not change, bypass, or silently extend upstream `maxIterations`.
-
-## Review
-
-After meaningful execution, use the existing upstream independent C2C review.
-
-Do not trust an execution summary as proof of success.
-
-Let ChatGPT inspect the actual repository, git state/diff, and available
-execution/test evidence through the existing MCP data plane.
-
-Never paste source files, diffs, or logs into ChatGPT when upstream MCP can
-provide them.
-
-Use only upstream C2C states and message formats.
-
-Human-facing labels such as Gate, accepted, repair needed, or PASS must never
-become new protocol states.
-
-## Continuity
-
-Delegate conversation mode, Project/long-chat behavior, conversation reuse,
-checkpoint recovery, HANDOFF, repair, and replacement-chat behavior entirely
-to `codex-with-chatgpt`.
-
-Do not add custom context scoring, context compression, automatic conversation
-rotation, or replacement-session logic.
-
-If a ChatGPT conversation is visibly degraded, lost, or otherwise needs
-replacement, use the current upstream conversation-management behavior.
-
-Do not modify the upstream `codex-with-chatgpt` skill or global/project
-`AGENTS.md` as part of running Control Room.
-
-## Language and human status
-
-Prefer concise English for agent-to-agent C2C instructions and protocol
-content unless the task requires another language.
-
-Use the user's language for human-facing progress and decisions.
-
-When progress visibility is useful, show a compact status projection containing:
-
-- mode;
-- overall goal;
-- current Gate;
-- upstream TASK_ID and iteration;
-- current C2C/checkpoint status;
-- completed work;
-- latest review result;
-- what Codex is doing now;
-- next expected step;
-- blocker, if any.
-
-This status is presentation only. Do not persist it as a second workflow state.
-
-## Authority
-
-Control Room governs workflow policy.
-
-`codex-with-chatgpt` governs setup, repair, connector/browser behavior,
-conversation management, protocol states/messages, TASK_ID and iteration
-mechanics, sessions/checkpoints, HANDOFF, execution recording, MCP access,
-evidence retrieval, security boundaries, and iteration-limit enforcement.
-
-If operational behavior conflicts, `codex-with-chatgpt` wins.
-
+When useful, report Autopilot status, the sprint goal, current and completed
+Gates, the relevant upstream state, the next action, and any blocker. Keep this
+as a brief status update, not a persisted workflow format.
