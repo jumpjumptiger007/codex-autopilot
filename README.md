@@ -1,11 +1,14 @@
 # Codex Autopilot
 
-Codex Autopilot is a thin autonomous multi-Gate sprint orchestration layer
-built on top of [`codex-with-chatgpt`](https://github.com/XiaoDuoYa/codex-with-chatgpt).
+Codex Autopilot is autonomous multi-Gate orchestration for Codex, built on top
+of [`codex-with-chatgpt`](https://github.com/XiaoDuoYa/codex-with-chatgpt).
+Upstream C2C handles each individual Gate; Codex Autopilot decides when to
+advance to the next Gate and when the overall sprint is complete.
 
-> C2C = inner bounded-task loop. Codex Autopilot = outer autonomous sprint loop.
+## Choose a workflow
 
-## Normal C2C
+For an ordinary bounded task that needs ChatGPT planning and review, use
+upstream:
 
 ```text
 $codex-with-chatgpt
@@ -13,58 +16,59 @@ $codex-with-chatgpt
 Implement the requested bounded task.
 ```
 
-Use this for ordinary ChatGPT-planned and independently reviewed Codex work.
-The upstream Skill owns setup, browser and connector behavior, and the task
-workflow.
-
-## Multi-Gate autonomous sprint
+For an autonomous multi-Gate sprint, invoke Codex Autopilot:
 
 ```text
-$codex-autopilot autopilot
+$codex-autopilot
 
 Complete this sprint: <goal, scope, constraints, and success criteria>
 ```
 
-Use this only when you explicitly want autonomous execution across multiple
-bounded C2C tasks. Autopilot chooses meaningful Gates inside the approved
-sprint scope. Each Gate is one complete upstream C2C task; after it reaches
-`DONE`, Autopilot checks the sprint criteria and starts the next in-scope task
-or finishes. It stops when the sprint is complete or material human input is
-required.
+Autopilot establishes upstream C2C readiness before Gate 1. Existing
+workspace configuration and session state are reused under upstream rules;
+a first-time workspace may require a human authorization step. Follow upstream
+C2C for workspace setup.
 
-## Initialize first, provide the sprint next
-
-You can initialize Autopilot before sharing the sprint goal:
+For important or long runs, use a recommended two-step launch. First send
+`$codex-autopilot` and ask it to initialize only. It establishes readiness,
+confirms the execution boundary, and stops before implementation with:
 
 ```text
-$codex-autopilot autopilot
-
-Initialize Codex Autopilot only.
-
-Use the authoritative codex-with-chatgpt workflow to establish readiness.
-
-Do not begin implementation, modify project files, or invent a goal.
-
-Stop when the upstream C2C workflow is ready and reply exactly:
-
 Codex Autopilot Ready
 ```
 
-Then send the sprint goal, scope, constraints, and success criteria in your
-next message.
+Then send the Sprint Goal / Sprint Envelope. That message begins Gate
+execution. For a simple, clear sprint, the invocation and goal may be sent
+together.
+
+## Sprint boundary
+
+Keep the Sprint Envelope concise: the goal, allowed scope, important
+constraints, success criteria, and relevant exclusions or stop conditions.
+Autopilot can derive bounded Gates as the work progresses.
+
+**One Gate is exactly one complete upstream C2C task.** Review-requested
+repairs stay inside that Gate and task. A later Gate starts only after the
+current task reaches upstream `DONE`; Autopilot then evaluates the sprint
+criteria and continues or stops.
+
+Upstream C2C owns readiness and individual-task workflow, including browser
+and connector handling, task protocol, iterations, review, and recovery.
+Autopilot owns the outer sprint loop and stops for completed criteria or when
+human input, a material decision, a genuine blocker, or work outside the
+approved envelope is required.
 
 ## Install
 
 Install [`codex-with-chatgpt`](https://github.com/XiaoDuoYa/codex-with-chatgpt)
-first, then copy the Skill into your Codex skills directory:
+and copy this Skill into your Codex skills directory:
 
 ```bash
 mkdir -p ~/.codex/skills/codex-autopilot
 cp skill/SKILL.md ~/.codex/skills/codex-autopilot/SKILL.md
 ```
 
-Start a new Codex conversation to refresh Skill discovery. Follow the upstream
-Skill for all C2C setup, browser, connector, task, review, and recovery details.
+Start a new Codex conversation to refresh Skill discovery.
 
 ## License
 

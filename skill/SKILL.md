@@ -1,85 +1,78 @@
 ---
 name: codex-autopilot
 description: >
-  Explicitly requested autonomous execution of a multi-Gate sprint, with each
-  Gate handled as one complete codex-with-chatgpt task. Do not activate for
-  ordinary bounded tasks or infer authorization from requests to continue,
-  finish, automate, or from Goal mode.
+  Autonomous multi-Gate sprint orchestration for Codex, built on
+  codex-with-chatgpt. Activate when the user explicitly invokes this Skill or
+  clearly asks to use Codex Autopilot for a sprint. Do not infer authorization
+  from requests to continue, finish, automate, or from Goal mode.
 ---
 
 # Codex Autopilot
 
-This Skill coordinates an approved sprint across ordinary
+Codex Autopilot coordinates an approved sprint across ordinary
 [`codex-with-chatgpt`](https://github.com/XiaoDuoYa/codex-with-chatgpt) tasks.
-It does not replace that Skill. C2C owns its setup, task workflow, review,
-recovery, and protocol. Its current instructions are authoritative.
+It owns only the outer sprint loop. Upstream C2C owns readiness and all
+individual-task mechanics; its current instructions are authoritative.
 
-## Activation
+## Activation and readiness
 
-Activate only when the user explicitly requests Autopilot for autonomous,
-multi-Gate execution, for example:
+Explicit invocation of this Skill authorizes autonomous multi-Gate execution
+within the user's approved Sprint Envelope. A clear natural-language request
+to use Codex Autopilot for a sprint may also activate this Skill when normal
+Skill discovery supports it. Do not infer authorization from “continue,”
+“finish this,” “do it,” “automatic,” Goal mode, or task size. For one bounded
+task that needs ChatGPT planning and review, use `codex-with-chatgpt` directly.
 
-- `$codex-autopilot autopilot`
-- “Run this sprint autonomously with Codex Autopilot.”
+Before Gate 1, invoke the normal upstream `codex-with-chatgpt` readiness
+workflow and proceed only when readiness is green. Reuse existing connector,
+Project, conversation/session state, and endpoint according to upstream rules.
+Follow upstream for workspace setup. A first-time workspace may require a
+human authorization step or supported guided fallback; surface and wait for
+any required human action. Do not bypass it.
 
-Do not infer that authorization from “continue,” “finish this,” “do it,”
-“automatic,” Goal mode, or task size. For one bounded task, use
-`codex-with-chatgpt` directly.
-
-## Initialization
-
-The user may initialize Autopilot before giving the sprint goal. In that case,
-follow the current `codex-with-chatgpt` readiness workflow and let it establish
-whatever readiness it requires. Do not modify project files, invent a goal,
-or begin implementation. Stop once C2C is ready. If the user requested the
-standard acknowledgement, reply exactly:
+For important or long runs, recommend a two-step launch. On the first
+`$codex-autopilot` message, the user may ask to initialize only. Establish
+upstream readiness, define or confirm the execution boundary, make no project
+changes, and stop before implementation. When ready, reply exactly:
 
 `Codex Autopilot Ready`
 
-The user provides the sprint goal and its scope, constraints, and success
-criteria in the next message. Surface any human action required by C2C.
+The user's next message supplies the Sprint Goal / Sprint Envelope and begins
+Gate execution. This is a launch workflow, not a separate mode or argument. A
+user may also invoke `$codex-autopilot` with the Sprint Envelope in one message
+when the goal is clear and readiness can be completed cleanly.
 
-## Sprint loop
+## Sprint Envelope and loop
 
-Treat the user's explicit Autopilot request and sufficiently specified goal as
-the sprint authorization. Establish a concise envelope from available context:
-goal, in-scope work, exclusions, constraints, and success criteria. Do not
-invent requirements or ask for information already available. If the goal is
-clear enough, proceed.
+Keep the Sprint Envelope concise and operational: goal, allowed scope,
+important constraints, success criteria, and relevant exclusions or stop
+conditions. Derive bounded Gates dynamically from it; do not require a rigid
+template, invent requirements, or expand scope.
 
-Choose meaningful, bounded, independently reviewable Gates within that
-envelope. Refine the remaining Gates as repository facts emerge, but do not
-expand scope or create work merely to continue. The invariant is:
+Codex Autopilot owns only this outer loop:
 
-**One Gate is exactly one complete upstream C2C task.**
+**Sprint Envelope → select bounded Gate → one complete upstream C2C task →
+wait for upstream `DONE` → evaluate sprint → next Gate or stop.**
 
-Run each Gate through the normal `codex-with-chatgpt` workflow. Let that Skill
-handle its own iterations and review. Do not start the next Gate until the
-current upstream task reaches `DONE`; then check the sprint criteria and
-either finish, stop for a material decision, or start a fresh C2C task for the
-next in-scope Gate. A `PLAN` within a Gate remains part of that same upstream
-task.
+Hard invariant: **one Gate is exactly one complete upstream C2C task.** Never
+split a Gate across C2C task IDs. Never start a later Gate until the current
+Gate reaches upstream `DONE`. Review-requested repair iterations remain within
+the same Gate and upstream task. Then check the sprint criteria and either
+finish, stop, or start one fresh C2C task for the next in-scope Gate.
 
-Do not create another protocol, task identifier, iteration counter,
-checkpoint, session, or recovery mechanism. The Gate is only an orchestration
-unit above C2C.
+Do not duplicate upstream `codex-with-chatgpt` mechanics. Upstream owns
+readiness and doctor workflow, browser/IAB handling, connector setup and
+repair, Project and conversation management, workspace identity, TASK_ID
+lifecycle, protocol states, iteration handling, execution recording, review,
+checkpoint/session state, HANDOFF, and reconnect/recovery behavior.
 
-## Responsibility and stopping
+## Stop conditions
 
-`codex-with-chatgpt` owns planning and review for each task, execution
-mechanics, setup, browser and connector behavior, conversation management,
-protocol, and recovery. Codex performs repository work and local validation
-under the approved scope. This Skill owns only the sprint envelope, Gate
-selection, continuation between completed tasks, overall completion, and
-scope enforcement.
-
-Continue through ordinary engineering failures and scope-local repairs using
-the upstream workflow. Stop and return control when the sprint criteria are
-met, or when progress requires a material decision, scope expansion,
-destructive or irreversible action, security/privacy judgment, human-only
-action, or external dependency. Also stop when upstream C2C reaches its own
-limit or reports a genuine blocker; never bypass or extend its limits.
-
-When useful, report Autopilot status, the sprint goal, current and completed
-Gates, the relevant upstream state, the next action, and any blocker. Keep this
-as a brief status update, not a persisted workflow format.
+Continue through ordinary implementation bugs, lint failures, test or build
+failures, and review-requested repairs that remain within the approved Gate.
+Stop when sprint success criteria are met, or when progress requires a
+material product or architecture decision outside the envelope, meaningful
+scope expansion, approval for a destructive or irreversible action,
+security/privacy judgment, credentials/login/CAPTCHA/2FA/consent or another
+human action, an upstream C2C iteration or blocking limit, or a genuine
+external dependency. Never bypass upstream limits or human authorization.
